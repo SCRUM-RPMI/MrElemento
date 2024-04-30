@@ -8,24 +8,35 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
 
     //Velocidad
-    [SerializeField] private float vel, vel_Max;
-    [SerializeField] private float dash_CD, t_cooldown;
+    [SerializeField] private float m_vel = 4.0f;
+    [SerializeField] private float m_jumpForce = 7.5f;
+    [SerializeField] private float m_rollForce = 6.0f;
+    
+    //Cooldowns
+    [SerializeField] private float dash_CD = 1f; //1 segundo
+    [SerializeField] private float t_cooldown; //Esto no sé qué hace
 
-    //Habilidades
-    public bool double_jump, dash, empowered_attack;
+    //Habilidades desbloqueables
+    public bool can_double_jump, can_dash, can_empowered_attack;
 
+    //Variables de control
+    public bool notDoubleJumping;
+    
     //Inventario de habilidades
     public bool habilidades; 
     public GameObject Habilidades;
     
-    
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        double_jump = false;
-        dash = false;
-        dash_CD = 0f;
+        //Inicializa a false las habilidades desbloqueables
+        can_double_jump = false;
+        can_dash = false;
+        can_empowered_attack;
+        //Oculta el inventario
         habilidades = false;
+        //Establecemos variables de control
+        notDoubleJumping = true;
     }
 
     void Update()
@@ -94,7 +105,7 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (m_grounded && !m_rolling)
+        if (m_grounded && !m_rolling) //Está en el suelo y no está rodando
         {
             m_animator.SetTrigger("Jump");
             m_grounded = false;
@@ -102,18 +113,39 @@ public class PlayerController : MonoBehaviour
             m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
             m_groundSensor.Disable(0.2f);
         }
-        else if (m_canDoubleJump && !m_rolling)
+        else if (can_double_jump && notDoubleJumping && !m_rolling) //No está en el suelo y puede doublejump
         {
-            m_canDoubleJump = false;
+            notDoubleJumping = false;
             m_animator.SetTrigger("Jump");
             m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
         }
     }
-
     void Run()
     {
         m_delayToIdle = 0.05f;
         m_animator.SetInteger("AnimState", 1);
+    }
+
+    private void Dash()
+    {
+        if (dash && dash_CD <= 0f)
+        {
+            Vector2 dir = new Vector2(Input.GetAxis("Horizontal"), 0);
+            if (dir.x == 0)
+            {
+                if (GetComponent<SpriteRenderer>().flipX)
+                    dir.x = -1;
+                else
+                    dir.x = 1;
+            }
+
+            if (Input.GetAxis("Fire1") > 0)
+            {
+                _rb.drag = 5f;
+                _rb.AddForce(dir * 20, ForceMode2D.Impulse);
+                dash_CD = t_cooldown;
+            }
+        }
     }
 
     // Ataques
