@@ -11,8 +11,11 @@ public class PlayerController : MonoBehaviour
     
     //HABILIDADES DESBLOQUABLES
     public bool canDoubleJump;
+    public GameObject DoubleJumpPanel;
     public bool canDash;
+    public GameObject DashPanel;
     public bool canEmpoweredAttack;
+    public GameObject EmpAttackPanel;
     
     //VELOCIDADES
     private float speed = 8f;
