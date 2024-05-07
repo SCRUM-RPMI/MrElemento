@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isWallSliding;
     
+    //--Jumping--
     private bool jump = true;
     private bool isJumping;
     
