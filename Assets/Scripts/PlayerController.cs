@@ -6,7 +6,13 @@ using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    private Rigidbody2D rb; //RigidBody
+    public GameObject habilidades; //Inventario de habilidades
+    
+    //HABILIDADES DESBLOQUABLES
+    public bool canDoubleJump;
+    public bool canDash;
+    public bool canEmpoweredAttack;
     
     //VELOCIDADES
     private float speed = 8f;
@@ -17,8 +23,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpingPower;
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
     
+    //COOLDOWNS
+    [SerializeField] private float dashCD = 1f; //1 segundo
+    
     //VARIABLES DE CONTROL
     private bool isFacingRight = true;
+    
+    //--Inventario de habilidades--
+    public bool habilidadesVis;
 
     private bool isWallSliding;
     
@@ -38,18 +50,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
     
-    //COOLDOWNS
-    [SerializeField] private float dashCD = 1f; //1 segundo
-
-    //HABILIDADES DESBLOQUABLES
-    public bool canDoubleJump;
-    public bool canDash;
-    public bool canEmpoweredAttack;
-    
-    //Inventario de habilidades
-    public bool habilidadesVis; 
-    public GameObject habilidades;
-    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
         habilidadesVis = false;
         
         //Establecemos variables de control
-        DoubleJumping = false;
+        
     }
 
     void Update()
@@ -80,6 +80,10 @@ public class PlayerController : MonoBehaviour
 
     // --Movimientos
     
+        
+    
     // --Ataques
+    
+    
     
 }
