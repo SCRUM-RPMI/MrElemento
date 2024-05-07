@@ -62,8 +62,12 @@ public class PlayerController : MonoBehaviour
         //Oculta el inventario
         habilidadesVis = false;
         
+<<<<<<< Updated upstream
         //Establecemos variables de control
         
+=======
+       
+>>>>>>> Stashed changes
     }
 
     void Update()
