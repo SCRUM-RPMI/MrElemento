@@ -11,11 +11,13 @@ public class PlayerController : MonoBehaviour
     
     //HABILIDADES DESBLOQUABLES
     public bool canDoubleJump;
-    public GameObject DoubleJumpPanel;
+    public GameObject doubleJumpPanel;
+    public bool canWallJump;
+    public GameObject wallJumpPanel;
     public bool canDash;
-    public GameObject DashPanel;
+    public GameObject dashPanel;
     public bool canEmpoweredAttack;
-    public GameObject EmpAttackPanel;
+    public GameObject empAttackPanel;
     
     //VELOCIDADES
     private float speed = 8f;
@@ -64,17 +66,32 @@ public class PlayerController : MonoBehaviour
         
         //Oculta el inventario
         habilidadesVis = false;
-
     }
 
     void Update()
     {
+        MostrarPanelHabilidades();
+        habilidades.SetActive(habilidadesVis);
         //Añadir código aquí
     }
 
     void FixedUpdate()
     {
         //Añadir codigo aquí
+    }
+    
+    // MOSTRAR PANEL DE HABILIDADES
+    private void MostrarPanelHabilidades() //Tecla h
+    {
+        if (Input.GetKeyDown("h"))
+        {
+            habilidadesVis = !habilidadesVis;
+            //Muestra en el panel solo las que estén desbloqueadas
+            doubleJumpPanel.SetActive(canDoubleJump);
+            wallJumpPanel.SetActive(canWallJump);
+            dashPanel.SetActive(canDash);
+            empAttackPanel.SetActive(canEmpoweredAttack);
+        };
     }
 
     // HABILIDADES
