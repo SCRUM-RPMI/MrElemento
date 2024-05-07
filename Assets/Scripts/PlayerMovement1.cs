@@ -50,8 +50,12 @@ public class PlayerMovement : MonoBehaviour
         if (!isWallJumping)
         {
             Flip();
-        }*/
 
+        }*/
+        Vector2 dir = new Vector2(Input.GetAxis("Horizontal"), 0f);
+
+        if (rb.velocity.magnitude < maxVel)
+            rb.AddForce(dir * speed, ForceMode2D.Force);
         Jump();
     }
 
@@ -64,10 +68,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector2 dir = new Vector2(Input.GetAxis("Horizontal"), 0f);
-
-        if (rb.velocity.magnitude < maxVel)
-            rb.AddForce(dir * speed, ForceMode2D.Force);
+      
     }
 
     private void Jump()
