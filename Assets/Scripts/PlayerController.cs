@@ -38,16 +38,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
     
-    //Cooldowns
+    //COOLDOWNS
     [SerializeField] private float dashCD = 1f; //1 segundo
 
-    //Habilidades desbloqueables
+    //HABILIDADES DESBLOQUABLES
     public bool canDoubleJump;
     public bool canDash;
     public bool canEmpoweredAttack;
-
-    //Variables de control
-    public bool DoubleJumping;
     
     //Inventario de habilidades
     public bool habilidadesVis; 
