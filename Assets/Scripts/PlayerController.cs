@@ -3,21 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+
+    public class Habilidad
+    {
+        public RawImage imagen;
+        public bool habilidadActivada;
+
+        // Constructor para inicializar los atributos de la habilidad
+        public Habilidad(RawImage imagen, bool habilidadActivada)
+        {
+            this.imagen = imagen;
+            this.habilidadActivada = habilidadActivada;
+        }
+    }
+
     private Rigidbody2D rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
     
     //HABILIDADES DESBLOQUABLES
     public bool canDoubleJump;
-    public GameObject doubleJumpPanel;
+    public RawImage doubleJumpPanel;
     public bool canWallJump;
-    public GameObject wallJumpPanel;
+    public RawImage wallJumpPanel;
     public bool canDash;
-    public GameObject dashPanel;
+    public RawImage dashPanel;
     public bool canEmpoweredAttack;
-    public GameObject empAttackPanel;
+    public RawImage empAttackPanel;
+
+    private RawImage[] habilidadesArray;
+    
+    
+    public Color colorActivo = Color.white;
+    public Color colorInactivo = Color.gray;
     
     //VELOCIDADES
     private float speed = 8f;
@@ -86,11 +107,19 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown("h"))
         {
             habilidadesVis = !habilidadesVis;
-            //Muestra en el panel solo las que estén desbloqueadas
-            doubleJumpPanel.SetActive(canDoubleJump);
-            wallJumpPanel.SetActive(canWallJump);
-            dashPanel.SetActive(canDash);
-            empAttackPanel.SetActive(canEmpoweredAttack);
+            
+            //Muestra habilidades
+            doubleJumpPanel.color = canDoubleJump ? colorActivo : colorInactivo;
+            doubleJumpPanel.GetComponentInChildren<Toggle>().isOn = canDoubleJump;
+            
+            wallJumpPanel.color = canWallJump ? colorActivo : colorInactivo;
+            wallJumpPanel.GetComponentInChildren<Toggle>().isOn = canWallJump;
+            
+            dashPanel.color = canDash ? colorActivo : colorInactivo;
+            dashPanel.GetComponentInChildren<Toggle>().isOn = canDash;
+            
+            empAttackPanel.color = canEmpoweredAttack ? colorActivo : colorInactivo;
+            empAttackPanel.GetComponentInChildren<Toggle>().isOn = canEmpoweredAttack;
         };
     }
 
