@@ -7,35 +7,46 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-
-    public class Habilidad
+    [System.Serializable]
+    public class Ability
     {
-        public RawImage imagen;
-        public bool habilidadActivada;
+        public RawImage panelView;
+        public bool unlocked;
 
-        // Constructor para inicializar los atributos de la habilidad
-        public Habilidad(RawImage imagen, bool habilidadActivada)
+        public Ability(RawImage panelView, bool unlocked)
         {
-            this.imagen = imagen;
-            this.habilidadActivada = habilidadActivada;
+            this.panelView = panelView;
+            this.unlocked = unlocked;
+        }
+        public Ability(RawImage panelView)
+        {
+            this.panelView = panelView;
+            this.unlocked = true;
         }
     }
-
+    
     private Rigidbody2D rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
     
-    //HABILIDADES DESBLOQUABLES
-    public bool canDoubleJump;
-    public RawImage doubleJumpPanel;
-    public bool canWallJump;
-    public RawImage wallJumpPanel;
-    public bool canDash;
-    public RawImage dashPanel;
-    public bool canEmpoweredAttack;
-    public RawImage empAttackPanel;
-
-    private RawImage[] habilidadesArray;
+    //HABILIDADES
+    private Ability[] abilities;
     
+    private static RawImage jumpPanel;
+    
+    private static bool canDoubleJump;
+    private static RawImage doubleJumpPanel;
+    private static bool canWallJump;
+    private static RawImage wallJumpPanel;
+    private static bool canDash;
+    private static RawImage dashPanel;
+    private static bool canEmpoweredAttack;
+    private static RawImage empAttackPanel;
+    
+    public Ability jumpAb = new Ability(jumpPanel);
+    public Ability doubleJumpAb = new Ability(doubleJumpPanel, canDoubleJump);
+    public Ability wallJumpAb = new Ability(wallJumpPanel, canWallJump);
+    public Ability dashAb = new Ability(dashPanel, canDash);
+    public Ability empAttackAb = new Ability(empAttackPanel, canEmpoweredAttack);
     
     public Color colorActivo = Color.white;
     public Color colorInactivo = Color.gray;
@@ -80,13 +91,16 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         
-        //Inicializa a false las habilidades desbloqueables
-        canDoubleJump = false;
-        canDash = false;
-        canEmpoweredAttack = false;
-        
         //Oculta el inventario
         habilidadesVis = false;
+        
+        //Inicializa a false las habilidades desbloqueables
+        doubleJumpAb.unlocked = false;
+        wallJumpAb.unlocked = false;
+        dashAb.unlocked = false;
+        empAttackAb.unlocked = false;
+        
+        abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
     }
 
     void Update()
@@ -108,18 +122,18 @@ public class PlayerController : MonoBehaviour
         {
             habilidadesVis = !habilidadesVis;
             
-            //Muestra habilidades
-            doubleJumpPanel.color = canDoubleJump ? colorActivo : colorInactivo;
-            doubleJumpPanel.GetComponentInChildren<Toggle>().isOn = canDoubleJump;
+            //Muestra habilidades bloqueadas o desbloqueadas
+
+            foreach (var ability in abilities)
+            {
+                foreach (var rawImage in ability.panelView.GetComponentsInChildren<RawImage>())
+                {
+                    rawImage.color = ability.unlocked ? colorActivo : colorInactivo;
+                }
+
+                ability.panelView.GetComponentInChildren<Toggle>().isOn = ability.unlocked;
+            }
             
-            wallJumpPanel.color = canWallJump ? colorActivo : colorInactivo;
-            wallJumpPanel.GetComponentInChildren<Toggle>().isOn = canWallJump;
-            
-            dashPanel.color = canDash ? colorActivo : colorInactivo;
-            dashPanel.GetComponentInChildren<Toggle>().isOn = canDash;
-            
-            empAttackPanel.color = canEmpoweredAttack ? colorActivo : colorInactivo;
-            empAttackPanel.GetComponentInChildren<Toggle>().isOn = canEmpoweredAttack;
         };
     }
 
