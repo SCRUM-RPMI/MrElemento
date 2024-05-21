@@ -3,21 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [System.Serializable]
+    public class Ability
+    {
+        public RawImage panelView;
+        public bool unlocked;
+
+        public Ability(RawImage panelView, bool unlocked)
+        {
+            this.panelView = panelView;
+            this.unlocked = unlocked;
+        }
+        public Ability(RawImage panelView)
+        {
+            this.panelView = panelView;
+            this.unlocked = true;
+        }
+    }
+    
     private Rigidbody2D rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
     
-    //HABILIDADES DESBLOQUABLES
-    public bool canDoubleJump;
-    public GameObject doubleJumpPanel;
-    public bool canWallJump;
-    public GameObject wallJumpPanel;
-    public bool canDash;
-    public GameObject dashPanel;
-    public bool canEmpoweredAttack;
-    public GameObject empAttackPanel;
+    //HABILIDADES
+    private Ability[] abilities;
+    
+    private static RawImage jumpPanel;
+    
+    private static bool canDoubleJump;
+    private static RawImage doubleJumpPanel;
+    private static bool canWallJump;
+    private static RawImage wallJumpPanel;
+    private static bool canDash;
+    private static RawImage dashPanel;
+    private static bool canEmpoweredAttack;
+    private static RawImage empAttackPanel;
+    
+    public Ability jumpAb = new Ability(jumpPanel);
+    public Ability doubleJumpAb = new Ability(doubleJumpPanel, canDoubleJump);
+    public Ability wallJumpAb = new Ability(wallJumpPanel, canWallJump);
+    public Ability dashAb = new Ability(dashPanel, canDash);
+    public Ability empAttackAb = new Ability(empAttackPanel, canEmpoweredAttack);
+    
+    public Color colorActivo = Color.white;
+    public Color colorInactivo = Color.gray;
     
     //VELOCIDADES
     private float speed = 8f;
@@ -59,13 +91,16 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         
-        //Inicializa a false las habilidades desbloqueables
-        canDoubleJump = false;
-        canDash = false;
-        canEmpoweredAttack = false;
-        
         //Oculta el inventario
         habilidadesVis = false;
+        
+        //Inicializa a false las habilidades desbloqueables
+        doubleJumpAb.unlocked = false;
+        wallJumpAb.unlocked = false;
+        dashAb.unlocked = false;
+        empAttackAb.unlocked = false;
+        
+        abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
     }
 
     void Update()
@@ -86,11 +121,19 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown("h"))
         {
             habilidadesVis = !habilidadesVis;
-            //Muestra en el panel solo las que estén desbloqueadas
-            doubleJumpPanel.SetActive(canDoubleJump);
-            wallJumpPanel.SetActive(canWallJump);
-            dashPanel.SetActive(canDash);
-            empAttackPanel.SetActive(canEmpoweredAttack);
+            
+            //Muestra habilidades bloqueadas o desbloqueadas
+
+            foreach (var ability in abilities)
+            {
+                foreach (var rawImage in ability.panelView.GetComponentsInChildren<RawImage>())
+                {
+                    rawImage.color = ability.unlocked ? colorActivo : colorInactivo;
+                }
+
+                ability.panelView.GetComponentInChildren<Toggle>().isOn = ability.unlocked;
+            }
+            
         };
     }
 
