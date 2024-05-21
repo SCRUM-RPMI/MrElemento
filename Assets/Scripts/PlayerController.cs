@@ -143,6 +143,43 @@ public class PlayerController : MonoBehaviour
         healthBarFill.fillAmount = fillAmount;
     }
     
+    // FUNCIONALIDAD DE PERDER VIDA
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, MaxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+        UpdateHealthBar(); // Actualiza la barra de salud
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        // Implementa acciones para cuando el jugador muere, como reiniciar la escena o mostrar un mensaje de game over.
+        Debug.Log("¡El jugador ha muerto!");
+    }
+
+    // DETECCIÓN DE COLISIONES CON PINCHOS
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Spikes"))
+        {
+            TakeDamage(20); // Reducir la salud cuando se tocan los pinchos
+        }
+    }
+
+    // DETECCIÓN DE COLISIONES CON ENEMIGOS
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
+        }
+    }
+    
     // MOSTRAR PANEL DE HABILIDADES
     // ReSharper disable Unity.PerformanceAnalysis
     private void MostrarPanelHabilidades() //Tecla h
