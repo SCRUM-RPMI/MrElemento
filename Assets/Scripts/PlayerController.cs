@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [System.Serializable]
-    public class Ability 
+    public class Ability
     {
         public RawImage panelView;
         public bool unlocked;
@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
     
+<<<<<<< HEAD
     //SALUD
     private const int MaxHealth = 1000;
     public int currentHealth;
@@ -35,6 +36,8 @@ public class PlayerController : MonoBehaviour
     public Text healthText;
     
     
+=======
+>>>>>>> ca0f02ff96961ed476414d40ea7ccaeb3e23e636
     //HABILIDADES
     private Ability[] _abilities;
     
@@ -96,12 +99,16 @@ public class PlayerController : MonoBehaviour
     
     void Start()
     {
+<<<<<<< HEAD
         _rb = GetComponent<Rigidbody2D>();
         // Inicializa la salud actual al valor máximo
         currentHealth = MaxHealth;
 
         // Actualiza la barra de vida y el texto
         UpdateHealthBar();
+=======
+        rb = GetComponent<Rigidbody2D>();
+>>>>>>> ca0f02ff96961ed476414d40ea7ccaeb3e23e636
         
         //Oculta el inventario
         habilidadesVis = false;
@@ -112,13 +119,16 @@ public class PlayerController : MonoBehaviour
         dashAb.unlocked = false;
         empAttackAb.unlocked = false;
         
+<<<<<<< HEAD
         //Crea un array con todas las habilidades
         _abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
+=======
+        abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
+>>>>>>> ca0f02ff96961ed476414d40ea7ccaeb3e23e636
     }
 
     void Update()
     {
-        UpdateHealthBar();
         MostrarPanelHabilidades();
         habilidades.SetActive(habilidadesVis);
         //Añadir código aquí
@@ -129,6 +139,7 @@ public class PlayerController : MonoBehaviour
         //Añadir codigo aquí
     }
     
+<<<<<<< HEAD
     // ACTUALIZAR LA BARRA DE SALUD
     void UpdateHealthBar()
     {
@@ -145,6 +156,8 @@ public class PlayerController : MonoBehaviour
         healthBarFill.fillAmount = fillAmount;
     }
     
+=======
+>>>>>>> ca0f02ff96961ed476414d40ea7ccaeb3e23e636
     // MOSTRAR PANEL DE HABILIDADES
     // ReSharper disable Unity.PerformanceAnalysis
     private void MostrarPanelHabilidades() //Tecla h
@@ -153,7 +166,7 @@ public class PlayerController : MonoBehaviour
         {
             habilidadesVis = !habilidadesVis;
             
-            //Actualiza cómo se ven las habilidades en el panel según si están desbloqueadas o no
+            //Muestra habilidades bloqueadas o desbloqueadas
 
             foreach (var ability in _abilities)
             {
@@ -172,6 +185,7 @@ public class PlayerController : MonoBehaviour
 
     // --Movimientos
     
+        
     
     // --Ataques
     
