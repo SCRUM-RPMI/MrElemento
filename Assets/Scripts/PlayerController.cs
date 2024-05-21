@@ -144,6 +144,7 @@ public class PlayerController : MonoBehaviour
     }
     
     // MOSTRAR PANEL DE HABILIDADES
+    // ReSharper disable Unity.PerformanceAnalysis
     private void MostrarPanelHabilidades() //Tecla h
     {
         if (Input.GetKeyDown("h"))
