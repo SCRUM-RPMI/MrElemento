@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [System.Serializable]
-    public class Ability
+    public class Ability 
     {
         public RawImage panelView;
         public bool unlocked;
@@ -27,6 +27,14 @@ public class PlayerController : MonoBehaviour
     
     private Rigidbody2D rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
+    
+    //SALUD
+    public int maxHealth = 1000;
+    public int currentHealth;
+
+    public Image healthBarFill;
+    public Text healthText;
+    
     
     //HABILIDADES
     private Ability[] abilities;
@@ -90,6 +98,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        // Inicializa la salud actual al valor máximo
+        currentHealth = maxHealth;
+
+        // Actualiza la barra de vida y el texto
+        UpdateHealthBar();
         
         //Oculta el inventario
         habilidadesVis = false;
@@ -100,6 +113,7 @@ public class PlayerController : MonoBehaviour
         dashAb.unlocked = false;
         empAttackAb.unlocked = false;
         
+        //Crea un array con todas las habilidades
         abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
     }
 
@@ -115,6 +129,16 @@ public class PlayerController : MonoBehaviour
         //Añadir codigo aquí
     }
     
+    // ACTUALIZAR LA BARRA DE SALUD
+    void UpdateHealthBar()
+    {
+        healthText.text = currentHealth + " / " + maxHealth;
+
+        // Calcula el porcentaje de vida y actualiza la imagen de la barra de vida
+        float fillAmount = (float)currentHealth / maxHealth;
+        healthBarFill.fillAmount = fillAmount;
+    }
+    
     // MOSTRAR PANEL DE HABILIDADES
     private void MostrarPanelHabilidades() //Tecla h
     {
@@ -122,7 +146,7 @@ public class PlayerController : MonoBehaviour
         {
             habilidadesVis = !habilidadesVis;
             
-            //Muestra habilidades bloqueadas o desbloqueadas
+            //Actualiza cómo se ven las habilidades en el panel según si están desbloqueadas o no
 
             foreach (var ability in abilities)
             {
@@ -141,7 +165,6 @@ public class PlayerController : MonoBehaviour
 
     // --Movimientos
     
-        
     
     // --Ataques
     
