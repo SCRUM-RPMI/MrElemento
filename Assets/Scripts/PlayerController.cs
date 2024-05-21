@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        UpdateHealthBar();
         MostrarPanelHabilidades();
         habilidades.SetActive(habilidadesVis);
         //Añadir código aquí
@@ -132,6 +133,8 @@ public class PlayerController : MonoBehaviour
     // ACTUALIZAR LA BARRA DE SALUD
     void UpdateHealthBar()
     {
+        currentHealth = (currentHealth > maxHealth) ? maxHealth : currentHealth;
+        
         healthText.text = currentHealth + " / " + maxHealth;
 
         // Calcula el porcentaje de vida y actualiza la imagen de la barra de vida
