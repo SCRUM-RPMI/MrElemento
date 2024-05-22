@@ -17,23 +17,18 @@ public class PlayerController : MonoBehaviour
             this.panelView = panelView;
             this.unlocked = unlocked;
         }
-        public Ability(RawImage panelView)
-        {
-            this.panelView = panelView;
-            this.unlocked = true;
-        }
     }
     
-    private Rigidbody2D _rb; //RigidBody
+    private Rigidbody2D _rb; // RigidBody
     
-    //SALUD
+    // SALUD
     [Header("Salud")]
     public int currentHealth;
     public Image healthBarFill;
     public Text healthText;
     private const int MaxHealth = 1000;
     
-    //HABILIDADES
+    // HABILIDADES
     [Header("Panel de habilidades")]
     public GameObject habilidades;
     public bool habilidadesVis;
@@ -52,7 +47,7 @@ public class PlayerController : MonoBehaviour
     private static RawImage _empAttackPanel;
     
     [Header("Habilidades")]
-    public Ability jumpAb = new Ability(_jumpPanel);
+    public Ability jumpAb = new Ability(_jumpPanel, true);
     public Ability doubleJumpAb = new Ability(_doubleJumpPanel, _canDoubleJump);
     public Ability wallJumpAb = new Ability(_wallJumpPanel, _canWallJump);
     public Ability dashAb = new Ability(_dashPanel, _canDash);
@@ -61,22 +56,22 @@ public class PlayerController : MonoBehaviour
     private Color _colorActivo = Color.white;
     private Color _colorInactivo = Color.gray;
     
-    //VELOCIDADES
+    // VELOCIDADES
     [Header("Velocidad")]
     [SerializeField] private float maxVel;
     [SerializeField] private float _speed = 8f;
     [SerializeField] private float _wallSlidingSpeed = 2f;
     
-    //FUERZAS
+    // FUERZAS
     [Header("Fuerza")]
     [SerializeField] private float jumpingPower;
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
     
-    //COOLDOWNS
+    // COOLDOWNS
     [Header("Cooldowns")]
     [SerializeField] private float dashCD = 1f; //1 segundo
     
-    //VARIABLES DE CONTROL
+    // VARIABLES DE CONTROL
     private bool isFacingRight = true;
     private bool isWallSliding;
     
@@ -106,16 +101,16 @@ public class PlayerController : MonoBehaviour
         // Actualiza la barra de vida y el texto
         UpdateHealthBar();
         
-        //Oculta el inventario
+        // Oculta el inventario
         habilidadesVis = false;
         
-        //Inicializa a false las habilidades desbloqueables
+        // Inicializa a false las habilidades desbloqueables
         doubleJumpAb.unlocked = false;
         wallJumpAb.unlocked = false;
         dashAb.unlocked = false;
         empAttackAb.unlocked = false;
         
-        //Crea un array con todas las habilidades
+        // Crea un array con todas las habilidades
         _abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
     }
 
@@ -123,12 +118,12 @@ public class PlayerController : MonoBehaviour
     {
         MostrarPanelHabilidades();
         habilidades.SetActive(habilidadesVis);
-        //Añadir código aquí
+        // Añadir código aquí
     }
 
     void FixedUpdate()
     {
-        //Añadir codigo aquí
+        // Añadir codigo aquí
     }
     
     // ACTUALIZAR LA BARRA DE SALUD
@@ -148,7 +143,6 @@ public class PlayerController : MonoBehaviour
     }
     
     // FUNCIONALIDAD DE PERDER VIDA
-
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -160,13 +154,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Die()
-    {
-        // Implementa acciones para cuando el jugador muere, como reiniciar la escena o mostrar un mensaje de game over.
-        Debug.Log("¡El jugador ha muerto!");
-    }
-
-    // DETECCIÓN DE COLISIONES CON PINCHOS
+    //--detección de colisiones con pinchos--
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Spikes"))
@@ -175,13 +163,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // DETECCIÓN DE COLISIONES CON ENEMIGOS
+    //--detección de colisiones con enemigos--
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
         }
+    }
+    
+    // FUNCIONALIDAD DE MORIR
+    private void Die()
+    {
+        // Implementa acciones para cuando el jugador muere, como reiniciar la escena o mostrar un mensaje de game over
+        Debug.Log("¡El jugador ha muerto!");
     }
     
     // MOSTRAR PANEL DE HABILIDADES
@@ -192,7 +187,7 @@ public class PlayerController : MonoBehaviour
         {
             habilidadesVis = !habilidadesVis;
             
-            //Muestra habilidades bloqueadas o desbloqueadas
+            // Muestra habilidades bloqueadas o desbloqueadas
 
             foreach (var ability in _abilities)
             {
@@ -209,11 +204,11 @@ public class PlayerController : MonoBehaviour
 
     // HABILIDADES
 
-    // --Movimientos
+    //--Movimientos--
     
         
     
-    // --Ataques
+    //--Ataques--
     
     
     
