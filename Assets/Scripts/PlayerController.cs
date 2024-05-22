@@ -25,16 +25,19 @@ public class PlayerController : MonoBehaviour
     }
     
     private Rigidbody2D _rb; //RigidBody
-    public GameObject habilidades; //Inventario de habilidades
     
     //SALUD
-    private const int MaxHealth = 1000;
+    [Header("Salud")]
     public int currentHealth;
-
     public Image healthBarFill;
     public Text healthText;
+    private const int MaxHealth = 1000;
     
     //HABILIDADES
+    [Header("Panel de habilidades")]
+    public GameObject habilidades;
+    public bool habilidadesVis;
+    
     private Ability[] _abilities;
     
     private static RawImage _jumpPanel;
@@ -48,6 +51,7 @@ public class PlayerController : MonoBehaviour
     private static bool _canEmpoweredAttack;
     private static RawImage _empAttackPanel;
     
+    [Header("Habilidades")]
     public Ability jumpAb = new Ability(_jumpPanel);
     public Ability doubleJumpAb = new Ability(_doubleJumpPanel, _canDoubleJump);
     public Ability wallJumpAb = new Ability(_wallJumpPanel, _canWallJump);
@@ -58,23 +62,22 @@ public class PlayerController : MonoBehaviour
     private Color _colorInactivo = Color.gray;
     
     //VELOCIDADES
-    private float _speed = 8f;
-    private float _wallSlidingSpeed = 2f;
+    [Header("Velocidad")]
     [SerializeField] private float maxVel;
+    [SerializeField] private float _speed = 8f;
+    [SerializeField] private float _wallSlidingSpeed = 2f;
     
     //FUERZAS
+    [Header("Fuerza")]
     [SerializeField] private float jumpingPower;
     private Vector2 wallJumpingPower = new Vector2(8f, 16f);
     
     //COOLDOWNS
+    [Header("Cooldowns")]
     [SerializeField] private float dashCD = 1f; //1 segundo
     
     //VARIABLES DE CONTROL
     private bool isFacingRight = true;
-    
-    //--Inventario de habilidades--
-    public bool habilidadesVis;
-
     private bool isWallSliding;
     
     //--Jumping--
@@ -88,6 +91,7 @@ public class PlayerController : MonoBehaviour
     private float wallJumpingDuration = 0.4f;
 
     //--Layer check--
+    [Header("Layer check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform wallCheck;
