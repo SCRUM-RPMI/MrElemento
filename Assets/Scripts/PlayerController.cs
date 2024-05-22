@@ -229,7 +229,7 @@ public class PlayerController : MonoBehaviour
                 _rb.AddForce(new Vector2(0, 1) * jumpingPower + wallJumpingPower, ForceMode2D.Impulse);
                 jump = false;
             }
-            else if (canDoubleJump)
+            else if (doubleJumpAb.unlocked && canDoubleJump)
             {
                 _rb.velocity = new Vector2(_rb.velocity.x, 0); // Reset vertical velocity before double jump
                 _rb.AddForce(new Vector2(0, 1) * doubleJumpPower, ForceMode2D.Impulse);
@@ -240,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleDash()
     {
-        if (Input.GetButtonDown("Dash") && !isDashing && Time.time > lastDashTime + dashCooldown)
+        if (dashAb.unlocked && Input.GetButtonDown("Dash") && !isDashing && Time.time > lastDashTime + dashCooldown)
         {
             StartCoroutine(Dash());
         }
@@ -276,7 +276,7 @@ public class PlayerController : MonoBehaviour
         }
         
         //--wall jumping--
-        if (collision.gameObject.layer == Mathf.Log(wallLayer, 2))
+        if (wallJumpAb.unlocked && collision.gameObject.layer == Mathf.Log(wallLayer, 2))
         {
             if (_rb.velocity.x < 0f)
             {
