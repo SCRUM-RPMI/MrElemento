@@ -60,30 +60,40 @@ public class PlayerController : MonoBehaviour
     // VELOCIDADES
     [Header("Velocidad")]
     [SerializeField] private float maxVel;
-    [SerializeField] private float _speed = 8f;
+    [SerializeField] private float speed = 8f;
     [SerializeField] private float _wallSlidingSpeed = 2f;
     
     // FUERZAS
     [Header("Fuerza")]
     [SerializeField] private float jumpingPower;
-    private Vector2 wallJumpingPower = new Vector2(8f, 16f);
+    [SerializeField] private Vector2 wallJumpingPower = new Vector2(0f, 0f);
+    [SerializeField] private float dashForce = 20f;
+    [SerializeField] private float doubleJumpPower = 15f;
     
     // COOLDOWNS
     [Header("Cooldowns")]
-    [SerializeField] private float dashCD = 1f; //1 segundo
+    [SerializeField] private float dashCooldown = 2f;
     
     // VARIABLES DE CONTROL
+    private float horizontal;
     private bool isFacingRight = true;
     private bool isWallSliding;
+    
+    //--Dash--
+    private bool isDashing;
+    private float lastDashTime;
     
     //--Jumping--
     private bool jump = true;
     private bool isJumping;
+    private bool canDoubleJump;
     
     //--Wall Jumping--
     private bool isWallJumping;
+    private float wallSlidingSpeed = 2f;
     private float wallJumpingTime = 0.2f;
-    private float wallJumpingCounter;
+    private float wallJumpForce;
+    private float Fsp;
     private float wallJumpingDuration = 0.4f;
 
     //--Layer check--
@@ -119,12 +129,19 @@ public class PlayerController : MonoBehaviour
     {
         MostrarPanelHabilidades();
         habilidades.SetActive(habilidadesVis);
-        // Añadir código aquí
+        
+        horizontal = Input.GetAxis("Horizontal");
+
+        if (_rb.velocity.magnitude < maxVel)
+            _rb.AddForce(new Vector2(horizontal, 0f) * speed, ForceMode2D.Force);
+
+        HandleJump();
+        HandleDash();
     }
 
     void FixedUpdate()
     {
-        // Añadir codigo aquí
+        Move();
     }
     
     // ACTUALIZAR LA BARRA DE SALUD
@@ -163,15 +180,6 @@ public class PlayerController : MonoBehaviour
             TakeDamage(20); // Reducir la salud cuando se tocan los pinchos
         }
     }
-
-    //--detección de colisiones con enemigos--
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
-        }
-    }
     
     // FUNCIONALIDAD DE MORIR
     private void Die()
@@ -207,7 +215,81 @@ public class PlayerController : MonoBehaviour
 
     //--Movimientos--
     
+    private void Move()
+    {
+        // Implement movement logic if necessary
+    }
+    
+    private void HandleJump()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (jump)
+            {
+                _rb.AddForce(new Vector2(0, 1) * jumpingPower + wallJumpingPower, ForceMode2D.Impulse);
+                jump = false;
+            }
+            else if (canDoubleJump)
+            {
+                _rb.velocity = new Vector2(_rb.velocity.x, 0); // Reset vertical velocity before double jump
+                _rb.AddForce(new Vector2(0, 1) * doubleJumpPower, ForceMode2D.Impulse);
+                canDoubleJump = false;
+            }
+        }
+    }
+
+    private void HandleDash()
+    {
+        if (Input.GetButtonDown("Dash") && !isDashing && Time.time > lastDashTime + dashCooldown)
+        {
+            StartCoroutine(Dash());
+        }
+    }
+    
+    private IEnumerator Dash()
+    {
+        isDashing = true;
+        lastDashTime = Time.time;
+
+        float originalGravity = _rb.gravityScale;
+        _rb.gravityScale = 0;
+        _rb.velocity = new Vector2(horizontal * dashForce, 0f);
+
+        yield return new WaitForSeconds(0.2f);
+
+        _rb.gravityScale = originalGravity;
+        isDashing = false;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //--detección de colisiones con enemigos--
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
+        }
         
+        if (collision.gameObject.layer == Mathf.Log(groundLayer, 2))
+        {
+            jump = true;
+            canDoubleJump = true;
+        }
+        
+        //--wall jumping--
+        if (collision.gameObject.layer == Mathf.Log(wallLayer, 2))
+        {
+            if (_rb.velocity.x < 0f)
+            {
+                wallJumpingPower.x = 10f;
+            }
+            else
+            {
+                wallJumpingPower.x = -10f;
+            }
+
+            jump = true;
+        }
+    }
     
     //--Ataques--
     
