@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -25,35 +24,42 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    private Rigidbody2D rb; //RigidBody
+    private Rigidbody2D _rb; //RigidBody
     public GameObject habilidades; //Inventario de habilidades
     
+    //SALUD
+    private const int MaxHealth = 1000;
+    public int currentHealth;
+
+    public Image healthBarFill;
+    public Text healthText;
+    
     //HABILIDADES
-    private Ability[] abilities;
+    private Ability[] _abilities;
     
-    private static RawImage jumpPanel;
+    private static RawImage _jumpPanel;
+
+    private static bool _canDoubleJump;
+    private static RawImage _doubleJumpPanel;
+    private static bool _canWallJump;
+    private static RawImage _wallJumpPanel;
+    private static bool _canDash;
+    private static RawImage _dashPanel;
+    private static bool _canEmpoweredAttack;
+    private static RawImage _empAttackPanel;
     
-    private static bool canDoubleJump;
-    private static RawImage doubleJumpPanel;
-    private static bool canWallJump;
-    private static RawImage wallJumpPanel;
-    private static bool canDash;
-    private static RawImage dashPanel;
-    private static bool canEmpoweredAttack;
-    private static RawImage empAttackPanel;
+    public Ability jumpAb = new Ability(_jumpPanel);
+    public Ability doubleJumpAb = new Ability(_doubleJumpPanel, _canDoubleJump);
+    public Ability wallJumpAb = new Ability(_wallJumpPanel, _canWallJump);
+    public Ability dashAb = new Ability(_dashPanel, _canDash);
+    public Ability empAttackAb = new Ability(_empAttackPanel, _canEmpoweredAttack);
     
-    public Ability jumpAb = new Ability(jumpPanel);
-    public Ability doubleJumpAb = new Ability(doubleJumpPanel, canDoubleJump);
-    public Ability wallJumpAb = new Ability(wallJumpPanel, canWallJump);
-    public Ability dashAb = new Ability(dashPanel, canDash);
-    public Ability empAttackAb = new Ability(empAttackPanel, canEmpoweredAttack);
-    
-    public Color colorActivo = Color.white;
-    public Color colorInactivo = Color.gray;
+    private Color _colorActivo = Color.white;
+    private Color _colorInactivo = Color.gray;
     
     //VELOCIDADES
-    private float speed = 8f;
-    private float wallSlidingSpeed = 2f;
+    private float _speed = 8f;
+    private float _wallSlidingSpeed = 2f;
     [SerializeField] private float maxVel;
     
     //FUERZAS
@@ -89,7 +95,12 @@ public class PlayerController : MonoBehaviour
     
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        // Inicializa la salud actual al valor máximo
+        currentHealth = MaxHealth;
+
+        // Actualiza la barra de vida y el texto
+        UpdateHealthBar();
         
         //Oculta el inventario
         habilidadesVis = false;
@@ -100,7 +111,8 @@ public class PlayerController : MonoBehaviour
         dashAb.unlocked = false;
         empAttackAb.unlocked = false;
         
-        abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
+        //Crea un array con todas las habilidades
+        _abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
     }
 
     void Update()
@@ -115,7 +127,61 @@ public class PlayerController : MonoBehaviour
         //Añadir codigo aquí
     }
     
+    // ACTUALIZAR LA BARRA DE SALUD
+    void UpdateHealthBar()
+    {
+        currentHealth = (currentHealth > MaxHealth) ? MaxHealth : currentHealth;
+        currentHealth = (currentHealth < 0) ? 0 : currentHealth;
+        
+        healthText.text = currentHealth + " / " + MaxHealth;
+
+        // Calcula el porcentaje de vida y actualiza la imagen de la barra de vida
+        float fillAmount = (float)currentHealth / MaxHealth;
+        healthBarFill.color = (currentHealth >= MaxHealth / 2) ? 
+            Color.green : (currentHealth > MaxHealth / 4) ? 
+                Color.yellow : Color.red;
+        healthBarFill.fillAmount = fillAmount;
+    }
+    
+    // FUNCIONALIDAD DE PERDER VIDA
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, MaxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+        UpdateHealthBar(); // Actualiza la barra de salud
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        // Implementa acciones para cuando el jugador muere, como reiniciar la escena o mostrar un mensaje de game over.
+        Debug.Log("¡El jugador ha muerto!");
+    }
+
+    // DETECCIÓN DE COLISIONES CON PINCHOS
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Spikes"))
+        {
+            TakeDamage(20); // Reducir la salud cuando se tocan los pinchos
+        }
+    }
+
+    // DETECCIÓN DE COLISIONES CON ENEMIGOS
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
+        }
+    }
+    
     // MOSTRAR PANEL DE HABILIDADES
+    // ReSharper disable Unity.PerformanceAnalysis
     private void MostrarPanelHabilidades() //Tecla h
     {
         if (Input.GetKeyDown("h"))
@@ -124,11 +190,11 @@ public class PlayerController : MonoBehaviour
             
             //Muestra habilidades bloqueadas o desbloqueadas
 
-            foreach (var ability in abilities)
+            foreach (var ability in _abilities)
             {
                 foreach (var rawImage in ability.panelView.GetComponentsInChildren<RawImage>())
                 {
-                    rawImage.color = ability.unlocked ? colorActivo : colorInactivo;
+                    rawImage.color = ability.unlocked ? _colorActivo : _colorInactivo;
                 }
 
                 ability.panelView.GetComponentInChildren<Toggle>().isOn = ability.unlocked;

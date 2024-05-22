@@ -929,9 +929,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1607171080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59d5ee029287f3f4abc539b93dbb1e27, type: 3}
+  m_Script: {fileID: 11500000, guid: b9f6ed16747d12c4c8609ec2290ca254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  habilidades: {fileID: 0}
+  jumpAb:
+    panelView: {fileID: 0}
+    unlocked: 1
+  doubleJumpAb:
+    panelView: {fileID: 0}
+    unlocked: 0
+  wallJumpAb:
+    panelView: {fileID: 0}
+    unlocked: 0
+  dashAb:
+    panelView: {fileID: 0}
+    unlocked: 0
+  empAttackAb:
+    panelView: {fileID: 0}
+    unlocked: 0
+  colorActivo: {r: 1, g: 1, b: 1, a: 1}
+  colorInactivo: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  maxVel: 10
+  jumpingPower: 10
+  dashCD: 1
+  habilidadesVis: 0
+  groundCheck: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  wallCheck: {fileID: 0}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!212 &1607171082
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1027,7 +1057,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &1607171085
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1086,7 +1116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpingPower: 12
-  maxVel: 20
+  maxVel: 10
   groundCheck: {fileID: 259114212}
   groundLayer:
     serializedVersion: 2
@@ -1095,6 +1125,9 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 128
+  dashForce: 20
+  dashCooldown: 2
+  doubleJumpPower: 15
 --- !u!1 &1648125250
 GameObject:
   m_ObjectHideFlags: 0
