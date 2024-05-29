@@ -48,5 +48,6 @@ public class Ataque : MonoBehaviour
     private void Die()
     {
         hud.gameOverVis = true;
+        Time.timeScale = 0;
     }
 }

@@ -113,6 +113,7 @@ public class ElementosHUD : MonoBehaviour
         if (Input.GetKeyDown("h"))
         {
             habilidadesVis = !habilidadesVis;
+            Time.timeScale = habilidadesVis ? 0 : 1;
             
             // Muestra habilidades bloqueadas o desbloqueadas
 
@@ -127,5 +128,6 @@ public class ElementosHUD : MonoBehaviour
             }
             
         };
+        
     }
 }
