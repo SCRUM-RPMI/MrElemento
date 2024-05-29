@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ataque : MonoBehaviour
 {
+    private Rigidbody2D _rb;
     private ElementosHUD hud;
     void Start()
     {
@@ -16,12 +17,19 @@ public class Ataque : MonoBehaviour
         
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Spikes"))
+        {
+            TakeDamage(50); 
+        }
+    }
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //--detección de colisiones con enemigos--
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            TakeDamage(30); // Reducir la salud cuando el jugador es atacado por un enemigo
+            TakeDamage(300); 
         }
     }
 

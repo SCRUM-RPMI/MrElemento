@@ -64,10 +64,10 @@ public class ElementosHUD : MonoBehaviour
         habilidadesVis = false;
         
         // Inicializa a false las habilidades desbloqueables
-        doubleJumpAb.unlocked = false;
+        doubleJumpAb.unlocked = true;
         wallJumpAb.unlocked = false;
-        dashAb.unlocked = false;
-        empAttackAb.unlocked = false;
+        dashAb.unlocked = true;
+        empAttackAb.unlocked = true;
         
         // Crea un array con todas las habilidades
         _abilities = new Ability[] { jumpAb, doubleJumpAb, wallJumpAb, dashAb, empAttackAb };
