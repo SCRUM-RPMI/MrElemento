@@ -17,6 +17,11 @@ public class ElementosHUD : MonoBehaviour
     }
     
     private Rigidbody2D _rb; // RigidBody
+    private GameManager _gameManager;
+
+    // GAME OVER
+    public GameObject gameOver;
+    public bool gameOverVis;
     
     // SALUD
     [Header("Salud")]
@@ -60,8 +65,9 @@ public class ElementosHUD : MonoBehaviour
         // Actualiza la barra de vida y el texto
         UpdateHealthBar();
         
-        // Oculta el inventario
+        // Oculta el inventario y el mensaje de game over
         habilidadesVis = false;
+        gameOverVis = false;
         
         // Inicializa a false las habilidades desbloqueables
         doubleJumpAb.unlocked = true;
@@ -76,6 +82,7 @@ public class ElementosHUD : MonoBehaviour
     void Update()
     {
         UpdateHealthBar();
+        MostrarGameOver();
         MostrarPanelHabilidades();
         habilidades.SetActive(habilidadesVis);
     }
@@ -95,12 +102,18 @@ public class ElementosHUD : MonoBehaviour
                 Color.yellow : Color.red;
         healthBarFill.fillAmount = fillAmount;
     }
+
+    private void MostrarGameOver()
+    {
+        gameOver.SetActive(gameOverVis);
+    }
     
     private void MostrarPanelHabilidades() //Tecla h
     {
         if (Input.GetKeyDown("h"))
         {
             habilidadesVis = !habilidadesVis;
+            Time.timeScale = habilidadesVis ? 0 : 1;
             
             // Muestra habilidades bloqueadas o desbloqueadas
 
@@ -115,5 +128,6 @@ public class ElementosHUD : MonoBehaviour
             }
             
         };
+        
     }
 }
