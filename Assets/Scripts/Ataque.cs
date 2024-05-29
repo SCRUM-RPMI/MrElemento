@@ -25,6 +25,7 @@ public class Ataque : MonoBehaviour
         }
     }
     
+    //HAY QUE CAMBIAR ESTO:
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -46,6 +47,6 @@ public class Ataque : MonoBehaviour
     
     private void Die()
     {
-        Debug.Log("¡El jugador ha muerto!");
+        hud.gameOverVis = true;
     }
 }
