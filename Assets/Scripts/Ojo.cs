@@ -9,11 +9,28 @@ public class Ojo : MonoBehaviour
     public float tiempoMaxParada = 3f; // Tiempo máximo de parada
     private Vector3 direccion = Vector3.right; // Dirección inicial de movimiento
     private Rigidbody2D rb;
+    public int damage = 10; // Daño que el enemigo inflige al jugador
+
+    private Transform player;
+    private Animator animator;
+    private AudioSource audioSource;
+    private bool isDead = false;
+
+    [SerializeField] private AudioClip attackAudio;
+    [SerializeField] private AudioClip deathAudio;
+    [SerializeField] private float currentHealth;
+    [SerializeField] private float maxHealth;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         StartCoroutine(MoverAleatoriamente());
+        animator = GetComponent<Animator>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = false; // Aseguramos que el audio no esté en loop
+        maxHealth = 100; // Asigna un valor mayor para maxHealth
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -49,5 +66,37 @@ public class Ojo : MonoBehaviour
         {
             direccion = -direccion;
         }
+
+        if (col.gameObject.CompareTag("Player"))
+        {
+            TakeDamage(100);
+        }
+    }
+
+
+
+    public void TakeDamage(int damage)
+    {
+        // Reducir la salud actual
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+
+        // Verificar si el personaje ha muerto
+        if (currentHealth <= 0)
+        {
+            if (!isDead)
+            {
+                isDead = true; // Asegurar que el estado de muerte solo se procese una vez
+                soundEfectsController.instance.playSoundFXClip(deathAudio, transform, 0.8f);
+                StartCoroutine(HandleDeath()); // Iniciar la corrutina para manejar la muerte
+            }
+        }
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        // Esperar hasta que el sonido de muerte haya terminado de reproducirse
+        yield return new WaitWhile(() => soundEfectsController.instance.isPlaying(deathAudio));
+        Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
     }
 }
