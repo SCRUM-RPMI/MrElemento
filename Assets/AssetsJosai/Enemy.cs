@@ -16,7 +16,12 @@ public class Enemy : MonoBehaviour
     private AudioSource audioSource;
     private bool isChasing;
     private bool isAttacking;
+    private bool isDead = false;
     [SerializeField] private AudioClip chaseAudio;
+    [SerializeField] private AudioClip attackAudio;
+    [SerializeField] private AudioClip deathAudio;
+    [SerializeField] private float currentHealth;
+    [SerializeField] private float maxHealth;
 
     void Start()
     {
@@ -27,6 +32,8 @@ public class Enemy : MonoBehaviour
         currentPatrolIndex = 0;
         isChasing = false;
         isAttacking = false;
+        maxHealth = 1;
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -94,6 +101,7 @@ public class Enemy : MonoBehaviour
         isAttacking = true;
         animator.SetTrigger("Ataque");
         AttackPlayer();
+
     }
 
     void UpdateEnemyDirection(Vector2 targetPosition)
@@ -113,15 +121,14 @@ public class Enemy : MonoBehaviour
         if (!audioSource.isPlaying)
         {
             audioSource.clip = chaseAudio;
-            audioSource.volume = 0.3f;
+            audioSource.volume = 0.2f;
             audioSource.Play();
         }
     }
 
     void AttackPlayer()
     {
-        // Aquí puedes implementar la lógica de ataque, por ejemplo, reduciendo la salud del jugador.
-        // Ejemplo: player.GetComponent<PlayerHealth>().TakeDamage(damage);
+        soundEfectsController.instance.playSoundFXClip(attackAudio, transform, 0.1f);
     }
 
     void OnDrawGizmosSelected()
@@ -136,4 +143,39 @@ public class Enemy : MonoBehaviour
     {
         isAttacking = false;
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            TakeDamage(100);
+        }
+    }
+
+
+    public void TakeDamage(int damage)
+    {
+        // Reducir la salud actual
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+
+        // Verificar si el personaje ha muerto
+        if (currentHealth <= 0)
+        {
+            if (!isDead)
+            {
+                isDead = true; // Asegurar que el estado de muerte solo se procese una vez
+                soundEfectsController.instance.playSoundFXClip(deathAudio, transform, 0.8f);
+                StartCoroutine(HandleDeath()); // Iniciar la corrutina para manejar la muerte
+            }
+        }
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        // Esperar hasta que el sonido de muerte haya terminado de reproducirse
+        yield return new WaitWhile(() => soundEfectsController.instance.isPlaying(deathAudio));
+        Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
+    }
 }
+

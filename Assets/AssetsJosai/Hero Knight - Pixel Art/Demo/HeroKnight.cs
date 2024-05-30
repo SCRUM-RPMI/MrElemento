@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEditor.Search;
 
 public class HeroKnight : MonoBehaviour
 {
@@ -28,9 +26,8 @@ public class HeroKnight : MonoBehaviour
     private float m_delayToIdle = 0.0f;
     private float m_rollDuration = 8.0f / 14.0f;
     private float m_rollCurrentTime;
-    private AudioSource audioSource;
-    private float previousHealth;
     private bool isDead = false; // Track if the character is dead
+    private double previousHealth;
 
     [SerializeField] private AudioClip atackAudio;
     [SerializeField] private AudioClip rollAudio;
@@ -109,6 +106,14 @@ public class HeroKnight : MonoBehaviour
         m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
         m_animator.SetBool("WallSlide", m_isWallSliding);
 
+        // Hurt
+        if (hud.currentHealth < previousHealth)
+        {
+            previousHealth = hud.currentHealth; // Update previousHealth before playing the animation to avoid repeated triggers
+            m_animator.SetTrigger("Hurt");
+            soundEfectsController.instance.playSoundFXClip(hitAudio, transform, 0.8f);
+        }
+
         // Death
         if (!isDead && (Input.GetKeyDown("e") && !m_rolling || hud.currentHealth <= 0))
         {
@@ -117,14 +122,6 @@ public class HeroKnight : MonoBehaviour
             m_animator.SetTrigger("Death");
             soundEfectsController.instance.playSoundFXClip(deathAudio, transform, 0.3f);
         }
-        // Hurt
-        else if (hud.currentHealth < previousHealth)
-        {
-            m_animator.SetTrigger("Hurt");
-            soundEfectsController.instance.playSoundFXClip(hitAudio, transform, 0.8f);
-            previousHealth = hud.currentHealth; // Update previousHealth after processing the hurt
-        }
-
         // Attack
         else if (Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
@@ -141,7 +138,7 @@ public class HeroKnight : MonoBehaviour
             // Call one of three attack animations "Attack1", "Attack2", "Attack3"
             m_animator.SetTrigger("Attack" + m_currentAttack);
 
-            soundEfectsController.instance.playSoundFXClip(atackAudio, transform, 0.3f);
+            soundEfectsController.instance.playSoundFXClip(atackAudio, transform, 0.5f);
 
             // Reset timer
             m_timeSinceAttack = 0.0f;
@@ -158,7 +155,6 @@ public class HeroKnight : MonoBehaviour
         // Roll
         else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
         {
-            soundEfectsController.instance.playSoundFXClip(rollAudio, transform, 0.3f);
             StartRoll();
         }
         // Jump
@@ -196,6 +192,9 @@ public class HeroKnight : MonoBehaviour
             if (m_delayToIdle < 0)
                 m_animator.SetInteger("AnimState", 0);
         }
+
+        // Update previousHealth at the end of Update to ensure it's always in sync with currentHealth
+        previousHealth = hud.currentHealth;
     }
 
     void StartRoll()
@@ -203,6 +202,7 @@ public class HeroKnight : MonoBehaviour
         m_rolling = true;
         m_animator.SetTrigger("Roll");
         m_rollCurrentTime = 0.0f; // Reset roll timer
+        soundEfectsController.instance.playSoundFXClip(rollAudio, transform, 0.8f);
     }
 
     void FixedUpdate()

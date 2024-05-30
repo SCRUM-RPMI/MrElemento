@@ -43,4 +43,9 @@ public class soundEfectsController : MonoBehaviour
 
 
     }
+
+    public bool isPlaying(AudioClip clip)
+    {
+        return soundFXObject.isPlaying && soundFXObject.clip == clip;
+    }
 }
