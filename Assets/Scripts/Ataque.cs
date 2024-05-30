@@ -24,6 +24,11 @@ public class Ataque : MonoBehaviour
         {
             TakeDamage(50); 
         }
+
+        if (other.CompareTag("pinchoMuerte"))
+        {
+            TakeDamage(hud.currentHealth);
+        }
     }
     
     //HAY QUE CAMBIAR ESTO:
