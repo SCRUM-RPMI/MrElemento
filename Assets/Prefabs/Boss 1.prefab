@@ -149,7 +149,6 @@ GameObject:
   - component: {fileID: 8627799563490176812}
   - component: {fileID: 6641314821085384417}
   - component: {fileID: 6920696116225681749}
-  - component: {fileID: 7308935827906152599}
   m_Layer: 0
   m_Name: shot-1 (1)
   m_TagString: Untagged
@@ -259,23 +258,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0.00000023841858}
   m_Size: {x: 0.01962328, y: 0.04179144}
   m_Direction: 0
---- !u!114 &7308935827906152599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 400496709641076615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8a02853d27cde949a11acb34c4f3bb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  waitTimeMin: 5
-  waitTimeMax: 10
-  player: {fileID: 0}
-  triggerDistance: 10
 --- !u!1 &1422481401156806229
 GameObject:
   m_ObjectHideFlags: 0

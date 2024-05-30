@@ -9,6 +9,7 @@ public class Ataque : MonoBehaviour
     void Start()
     {
         hud = GetComponent<ElementosHUD>();
+        Time.timeScale = 1;
     }
 
     // Update is called once per frame
