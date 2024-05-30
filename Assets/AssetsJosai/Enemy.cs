@@ -178,4 +178,3 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
     }
 }
-
