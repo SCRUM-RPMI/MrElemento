@@ -27,7 +27,15 @@ public class HeroKnight : MonoBehaviour
     private float m_delayToIdle = 0.0f;
     private float m_rollDuration = 8.0f / 14.0f;
     private float m_rollCurrentTime;
+    private AudioSource audioSource;
 
+
+    [SerializeField] private AudioClip atackAudio;
+    [SerializeField] private AudioClip rollAudio;
+    [SerializeField] private AudioClip deathAudio;
+    [SerializeField] private AudioClip hitAudio;
+    [SerializeField] private AudioClip pasosAudio;
+    [SerializeField] private AudioClip jumpAudio;
     // Use this for initialization
     void Start()
     {
@@ -125,6 +133,8 @@ public class HeroKnight : MonoBehaviour
             // Call one of three attack animations "Attack1", "Attack2", "Attack3"
             m_animator.SetTrigger("Attack" + m_currentAttack);
 
+            soundEfectsController.instance.playSoundFXClip(atackAudio, transform, 0.3f);
+
             // Reset timer
             m_timeSinceAttack = 0.0f;
         }
@@ -139,6 +149,7 @@ public class HeroKnight : MonoBehaviour
         // Roll
         else if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding)
         {
+            soundEfectsController.instance.playSoundFXClip(rollAudio, transform, 0.3f);
             StartRoll();
         }
         //Jump
@@ -151,6 +162,7 @@ public class HeroKnight : MonoBehaviour
                 m_animator.SetBool("Grounded", m_grounded);
                 m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce);
                 m_groundSensor.Disable(0.2f);
+                soundEfectsController.instance.playSoundFXClip(jumpAudio, transform, 0.3f);
             }
             else if (m_canDoubleJump && !m_rolling)
             {
@@ -165,6 +177,7 @@ public class HeroKnight : MonoBehaviour
             // Reset timer
             m_delayToIdle = 0.05f;
             m_animator.SetInteger("AnimState", 1);
+            
         }
         //Idle
         else

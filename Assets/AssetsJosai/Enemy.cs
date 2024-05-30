@@ -9,18 +9,23 @@ public class Enemy : MonoBehaviour
     public float attackRange = 1f; // Rango de ataque del enemigo
     public int damage = 10; // Daño que el enemigo inflige al jugador
     public Transform[] patrolPoints; // Puntos de patrullaje
+
     private int currentPatrolIndex;
     private Transform player;
     private Animator animator;
-    public bool isChasing; // Variable para rastrear si el enemigo está persiguiendo al jugador
+    private AudioSource audioSource;
+    private bool isChasing;
     private bool isAttacking;
+    [SerializeField] private AudioClip chaseAudio;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = false; // Aseguramos que el audio no esté en loop
         currentPatrolIndex = 0;
-        isChasing = false; // Al inicio, el enemigo no está persiguiendo al jugador
+        isChasing = false;
         isAttacking = false;
     }
 
@@ -30,21 +35,18 @@ public class Enemy : MonoBehaviour
 
         if (distanceToPlayer <= attackRange)
         {
-            isChasing = false;
-            isAttacking = true;
-            animator.SetTrigger("Ataque");
-            AttackPlayer();
+            StartAttacking();
         }
         else if (distanceToPlayer <= detectionRange)
         {
-
-            ChasePlayer();
+            StartChasing();
         }
         else
         {
-            isChasing = false;
+            StopChasing();
             Patrol();
         }
+
         animator.SetBool("isChasing", isChasing);
     }
 
@@ -60,50 +62,65 @@ public class Enemy : MonoBehaviour
             currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
         }
 
-        // Si no estamos persiguiendo al jugador, actualizamos la animación
         if (!isChasing)
         {
-            animator.SetBool("isChasing", false);
-            // Si estamos patrullando hacia la izquierda, invertimos la escala en X
-            if (transform.position.x > targetPoint.position.x)
-            {
-                transform.localScale = new Vector3(-3f, 3f, 3f);
-            }
-            // Si estamos patrullando hacia la derecha, dejamos la escala en X sin modificar
-            else
-            {
-                transform.localScale = new Vector3(3f, 3f, 3f);
-            }
+            UpdateEnemyDirection(targetPoint.position);
         }
     }
 
-    void ChasePlayer()
+    void StartChasing()
     {
         if (!isAttacking)
         {
-            // Movemos al enemigo hacia el jugador
-            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-            // Cambiamos la variable isChasing a true ya que ahora estamos persiguiendo al jugador
             isChasing = true;
-            // Actualizamos la animación
-            animator.SetBool("isChasing", true);
-            // Invertimos la escala en X según la dirección del jugador
-            if (player.position.x < transform.position.x)
-            {
-                transform.localScale = new Vector3(-3f, 3f, 3f);
-            }
-            else
-            {
-                transform.localScale = new Vector3(3f, 3f, 3f);
-            }
+            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+            UpdateEnemyDirection(player.position);
+            PlayChaseAudio();
+        }
+    }
+
+    void StopChasing()
+    {
+        isChasing = false;
+        if (audioSource.isPlaying && audioSource.clip == chaseAudio)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    void StartAttacking()
+    {
+        isChasing = false;
+        isAttacking = true;
+        animator.SetTrigger("Ataque");
+        AttackPlayer();
+    }
+
+    void UpdateEnemyDirection(Vector2 targetPosition)
+    {
+        if (targetPosition.x < transform.position.x)
+        {
+            transform.localScale = new Vector3(-3f, 3f, 3f);
+        }
+        else
+        {
+            transform.localScale = new Vector3(3f, 3f, 3f);
+        }
+    }
+
+    void PlayChaseAudio()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.clip = chaseAudio;
+            audioSource.volume = 0.3f;
+            audioSource.Play();
         }
     }
 
     void AttackPlayer()
     {
-
         // Aquí puedes implementar la lógica de ataque, por ejemplo, reduciendo la salud del jugador.
-        //animator.SetTrigger("Attack");
         // Ejemplo: player.GetComponent<PlayerHealth>().TakeDamage(damage);
     }
 
