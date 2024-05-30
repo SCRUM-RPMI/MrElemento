@@ -21,12 +21,17 @@ public class Ojo : MonoBehaviour
     [SerializeField] private float currentHealth;
     [SerializeField] private float maxHealth;
 
+    private GameObject boss;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         StartCoroutine(MoverAleatoriamente());
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject bossObject = GameObject.FindGameObjectWithTag("boss");
+        SetBoss(bossObject);
+
         audioSource = GetComponent<AudioSource>();
         audioSource.loop = false; // Aseguramos que el audio no esté en loop
         maxHealth = 100; // Asigna un valor mayor para maxHealth
@@ -73,7 +78,10 @@ public class Ojo : MonoBehaviour
         }
     }
 
-
+    public void SetBoss(GameObject bossObject)
+    {
+        boss = bossObject;
+    }
 
     public void TakeDamage(int damage)
     {
@@ -97,6 +105,10 @@ public class Ojo : MonoBehaviour
     {
         // Esperar hasta que el sonido de muerte haya terminado de reproducirse
         yield return new WaitWhile(() => soundEfectsController.instance.isPlaying(deathAudio));
+        if (boss != null)
+        {
+            Destroy(boss);
+        }
         Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
     }
 }

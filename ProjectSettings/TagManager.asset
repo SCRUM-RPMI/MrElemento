@@ -8,6 +8,7 @@ TagManager:
   - Spikes
   - Pared
   - pinchoMuerte
+  - boss
   layers:
   - Default
   - TransparentFX
