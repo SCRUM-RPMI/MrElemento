@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float speed = 2f; // Velocidad de patrullaje del enemigo
-    public float detectionRange = 5f; // Rango de detección del jugador
-    public float attackRange = 1f; // Rango de ataque del enemigo
-    public int damage = 10; // Daño que el enemigo inflige al jugador
-    public Transform[] patrolPoints; // Puntos de patrullaje
+    public float speed = 2f; 
+    public float detectionRange = 5f; 
+    public float attackRange = 1f; 
+    public int damage = 10; 
+    public Transform[] patrolPoints; 
 
     private int currentPatrolIndex;
     private Transform player;
@@ -28,11 +28,11 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         audioSource = GetComponent<AudioSource>();
-        audioSource.loop = false; // Aseguramos que el audio no esté en loop
+        audioSource.loop = false; 
         currentPatrolIndex = 0;
         isChasing = false;
         isAttacking = false;
-        maxHealth = 1;
+        maxHealth = 100;
         currentHealth = maxHealth;
     }
 
@@ -146,35 +146,32 @@ public class Enemy : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            TakeDamage(100);
-        }
+        // Eliminar esta llamada para evitar que el enemigo reciba daÃ±o al chocar con el jugador
     }
 
 
     public void TakeDamage(int damage)
     {
-        // Reducir la salud actual
+        
         currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); 
 
-        // Verificar si el personaje ha muerto
+       
         if (currentHealth <= 0)
         {
             if (!isDead)
             {
-                isDead = true; // Asegurar que el estado de muerte solo se procese una vez
+                isDead = true; 
                 soundEfectsController.instance.playSoundFXClip(deathAudio, transform, 0.8f);
-                StartCoroutine(HandleDeath()); // Iniciar la corrutina para manejar la muerte
+                StartCoroutine(HandleDeath()); 
             }
         }
     }
 
     private IEnumerator HandleDeath()
     {
-        // Esperar hasta que el sonido de muerte haya terminado de reproducirse
+        
         yield return new WaitWhile(() => soundEfectsController.instance.isPlaying(deathAudio));
-        Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
+        Destroy(gameObject); 
     }
 }

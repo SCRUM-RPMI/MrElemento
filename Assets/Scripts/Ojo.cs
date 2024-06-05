@@ -1,22 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class Ojo : MonoBehaviour
 {
-    public float velocidad = 5f; // Velocidad de movimiento del objeto
-    public float tiempoMinParada = 1f; // Tiempo mínimo de parada
-    public float tiempoMaxParada = 3f; // Tiempo máximo de parada
-    private Vector3 direccion = Vector3.right; // Dirección inicial de movimiento
+    public float velocidad = 5f;
+    public float tiempoMinParada = 1f;
+    public float tiempoMaxParada = 3f;
+    private Vector3 direccion = Vector3.right;
     private Rigidbody2D rb;
-    public int damage = 10; // Daño que el enemigo inflige al jugador
+    public int damage = 10;
 
-    private Transform player;
     private Animator animator;
     private AudioSource audioSource;
     private bool isDead = false;
 
-    [SerializeField] private AudioClip attackAudio;
     [SerializeField] private AudioClip deathAudio;
     [SerializeField] private float currentHealth;
     [SerializeField] private float maxHealth;
@@ -28,19 +25,14 @@ public class Ojo : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         StartCoroutine(MoverAleatoriamente());
         animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        GameObject bossObject = GameObject.FindGameObjectWithTag("boss");
-        SetBoss(bossObject);
-
         audioSource = GetComponent<AudioSource>();
-        audioSource.loop = false; // Aseguramos que el audio no esté en loop
-        maxHealth = 100; // Asigna un valor mayor para maxHealth
+        audioSource.loop = false;
+        maxHealth = 100;
         currentHealth = maxHealth;
     }
 
     void Update()
     {
-        // Mover el objeto en la dirección actual
         rb.MovePosition(rb.position + new Vector2(direccion.x, direccion.y) * velocidad * Time.deltaTime);
     }
 
@@ -48,11 +40,9 @@ public class Ojo : MonoBehaviour
     {
         while (true)
         {
-            // Esperar un tiempo aleatorio
             float tiempoParada = Random.Range(tiempoMinParada, tiempoMaxParada);
             yield return new WaitForSeconds(tiempoParada);
 
-            // Decidir una nueva dirección aleatoriamente
             if (Random.value > 0.5f)
             {
                 direccion = Vector3.right;
@@ -66,49 +56,45 @@ public class Ojo : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        // Cambiar la dirección al chocar con una pared
         if (col.gameObject.CompareTag("Pared"))
         {
             direccion = -direccion;
         }
-
-        if (col.gameObject.CompareTag("Player"))
-        {
-            TakeDamage(100);
-        }
     }
 
-    public void SetBoss(GameObject bossObject)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        boss = bossObject;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            // Si el jugador choca con el ojo, aplica daÃ±o al ojo
+            TakeDamage(damage);
+        }
     }
 
     public void TakeDamage(int damage)
     {
-        // Reducir la salud actual
         currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Asegura que la salud no sea menor que 0 ni mayor que la salud máxima
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        // Verificar si el personaje ha muerto
         if (currentHealth <= 0)
         {
             if (!isDead)
             {
-                isDead = true; // Asegurar que el estado de muerte solo se procese una vez
+                isDead = true;
                 soundEfectsController.instance.playSoundFXClip(deathAudio, transform, 0.8f);
-                StartCoroutine(HandleDeath()); // Iniciar la corrutina para manejar la muerte
+                StartCoroutine(HandleDeath());
+                
             }
         }
     }
 
     private IEnumerator HandleDeath()
     {
-        // Esperar hasta que el sonido de muerte haya terminado de reproducirse
         yield return new WaitWhile(() => soundEfectsController.instance.isPlaying(deathAudio));
         if (boss != null)
         {
             Destroy(boss);
         }
-        Destroy(gameObject); // Destruir el objeto después de que el sonido de muerte haya terminado
+        Destroy(gameObject);
     }
 }
